@@ -1,0 +1,3 @@
+include README.md
+include samples/vdetelweb.rc
+recursive-include pyvdetelweb/assets *.css *.js *.html

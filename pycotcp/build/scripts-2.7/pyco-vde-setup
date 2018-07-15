@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+function check_if() {
+    t1=$(ifconfig | grep -o vde0)
+    t2="vde0"
+    if [ "$t1" != "$t2" ]; then
+        return 1
+    fi
+
+    return 0
+}
+
+function help() {
+    echo 'REQUIRES ROOT'
+    echo 'Cmd line arguments can be:'
+    echo 'start: to start the vde setup'
+    echo 'stop: to cleanup the vde setup'
+    echo 'pyco-vde-setup (start|stop) [address [filename [devname]]]'
+    exit
+}
+
+function start_vde() {
+    echo "Setting up VDE"
+    ADDRESS=$1
+    FILENAME=$2
+    DEVNAME=$3
+
+    if [ -z "$ADDRESS" ]; then
+        ADDRESS=10.40.0.1/24
+    fi
+
+    if [ -z "$FILENAME" ]; then
+        FILENAME=/tmp/pic0.ctl
+    fi
+
+    if [ -z "$DEVNAME" ]; then
+        DEVNAME=vde0
+    fi
+
+    MGMT=$(echo $FILENAME | cut -d'.' -f 1).mgmt
+
+    echo "Address: $ADDRESS File: $FILENAME MGMT: $MGMT"
+
+    #TODO parametrize netmask? (Only needed for ifconfig
+    sudo vde_switch -s $FILENAME -m 777 -M $MGMT -d -hub -t $DEVNAME
+    if sudo /sbin/ifconfig $DEVNAME $ADDRESS netmask 255.255.255.0; then
+        echo "Success"
+    elif sudo ip addr add $ADDRESS dev $DEVNAME; then
+        echo "Success"
+    else
+        echo "Failure"
+    fi
+}
+
+function stop_vde() {
+    echo "Stopping VDE"
+    ADDRESS=$1
+    FILENAME=$2
+    DEVNAME=$3
+
+    if [ -z "$ADDRESS" ]; then
+        ADDRESS=10.40.0.1
+    fi
+
+    if [ -z "$FILENAME" ]; then
+        FILENAME=/tmp/pic0.ctl
+    fi
+
+    if [ -z "$DEVNAME" ]; then
+        DEVNAME=vde0
+    fi
+
+    MGMT=$(echo $FILENAME | cut -d'.' -f 1).mgmt
+
+
+    if sudo /sbin/ifconfig $DEVNAME down; then
+        echo "Success"
+    elif sudo ip addr del $ADDRESS dev $DEVNAME; then
+        echo "Success"
+    else echo "Failure"
+    fi
+
+    sudo vdecmd -s $MGMT shutdown
+}
+
+case $1 in
+    start)
+        echo 'Starting VDE setup'
+        #if_result=$(check_if)
+        #if [[ $if_result -eq 1 ]]
+        #then
+            #stop_vde $2 $3 $4
+        #    echo "Already running"
+        #    exit
+        #fi
+        start_vde $2 $3 $4
+        ;;
+    stop)
+        echo 'Stopping VDE setup'
+        stop_vde $2 $3 $4
+        ;;
+    restart)
+        stop_vde $2 $3 $4
+        start_vde $2 $3 $4
+        ;;
+    --help)
+        help
+        ;;
+    *)
+        echo 'Wrong syntax!'
+        help
+        ;;
+esac

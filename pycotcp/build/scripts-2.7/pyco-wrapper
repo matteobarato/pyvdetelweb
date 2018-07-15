@@ -1,0 +1,113 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import subprocess
+import argparse
+
+def maskToCidr4(mask):
+    return sum([ bin(int(x)).count('1') for x in mask.split('.') ])
+
+def maskToCidr6(mask):
+    count = 0
+    index = 0
+    array = []
+    split = mask.split(':')
+
+    for x in split:
+        index = index + 1
+        if x == '':
+            break
+        array.append(int(x, 16))
+
+    while len(array) < 8 - len(split[index:]):
+        array.append(0)
+
+    for x in split[index:]:
+        if x == '':
+            array.append(0)
+            continue
+        array.append(int(x, 16))
+
+    for value in array:
+        count = count + bin(value).count('1')
+
+    return count
+
+parser = argparse.ArgumentParser(description = "Wraps an existing python module with pycotcp")
+parser.add_argument("-s", "--switchaddress", metavar = "switchaddr", type = str, required = False, help = "Address of the switch that will be used to create the VDE")
+parser.add_argument("-a", "--address", metavar = "addr", type = str, required = False, help = "Address of the device that will be created on the VDE")
+parser.add_argument("-n", "--netmask", metavar = "netmask", type = str, required = False, help = "Netmask of the device that will be created on the VDE")
+parser.add_argument("-f", "--filename", metavar = "file", type = str, required = False, help = "path of the vde_switch, will be created if it doesn't exist")
+parser.add_argument("-d", "--device", metavar = "dev", type = str, required = False, help = "Device to be created on the VDE")
+parser.add_argument("-t", "--devtype", metavar = "devtype", type = str, required = False, help = "Type of the device to be created on the VDE")
+parser.add_argument("-l", "--library", metavar = "library", type = str, required = False, default = "picotcp", choices = ["picotcp", "lwipv6", "fdpicotcp"], help = "Library to be used for IoT&T")
+parser.add_argument("-p", "--parameters", metavar = "param", type = str, required = False, nargs = "+", help = "Parameters for the script to run")
+parser.add_argument("-c", "--create", action = "store_true", required = False, help = "If present, creates VDE setup instead of using an existing one")
+parser.add_argument("script", metavar = "script", type = str, help = "Script to run inside VDE")
+
+args = parser.parse_args()
+
+switchaddress = args.switchaddress
+address = args.address
+netmask = args.netmask
+filename = args.filename
+device = args.device
+devtype = args.devtype
+parameters = args.parameters
+create = args.create
+
+if not switchaddress:
+    switchaddress = "10.40.0.1"
+
+if not address:
+    address = "10.40.0.55"
+
+if not netmask:
+    netmask = "255.255.255.0"
+
+if not filename:
+    filename = "/tmp/pic0.ctl"
+
+if not device:
+    device = "vde0"
+
+if not devtype:
+    devtype = "vde"
+
+if not parameters:
+    parameters = []
+
+runnerparams = ['-a', address, '-n', netmask, '-f', filename, '-d', device, '-t', devtype, '-l', args.library]
+
+if parameters:
+    runnerparams = ['-p'] + parameters
+
+cidrswitchaddress = ""
+if ":" in netmask:
+    cidrswitchaddress = switchaddress + "/" + str(maskToCidr6(netmask))
+else:
+    cidrswitchaddress = switchaddress + "/" + str(maskToCidr4(netmask))
+
+realpath = os.path.realpath(__file__)
+scripts = realpath[:realpath.rfind('/')]
+eggpath = realpath[:realpath.rfind('EGG-INFO')]
+newpythonpath = eggpath + "pycotcp"
+
+#os.environ["PYTHONPATH"] = "/usr/local/lib/python2.7/dist-packages/fycotcp-0.0.3-py2.7.egg/fycotcp"
+#os.environ["OLDPYTHONPATH"] = ""
+os.environ["PYTHONPATH"] = newpythonpath
+
+#TODO create a new interface if this one already exists, adapt to current situation (or not, allow the user to choose device/IPADDR ?)
+
+#Probably could use /usr/bin/env to run these scripts
+print cidrswitchaddress
+if create:
+    subprocess.call([scripts + "/pyco-vde-setup", "start", cidrswitchaddress, filename, device])
+
+#subprocess.call([args.script] + parameters)
+print "Calling /pyco-runner.py %s %s" % (args.script, str(runnerparams))
+subprocess.call([scripts + "/pyco-runner.py", args.script] + runnerparams)
+#runpy.run_module("pyco-runner", init_globals = globals())
+

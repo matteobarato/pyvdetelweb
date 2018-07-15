@@ -1,0 +1,21 @@
+{% extends "template.html" %}
+
+{% block title %} {{terminal_prefix}} - Terminal {% endblock %}
+
+{% block content %}
+
+<div id="history" class="col-12 response">
+  <pre>
+    {% for line in history %} {{line | safe}}{% endfor %}
+  </pre>
+</div>
+
+<script>
+  window.addEventListener('load', ()=>{
+    let hist = document.getElementById('history')
+    hist.innerHTML = hist.innerHTML.replace('\n', '<br>')
+    hist.scrollTop = hist.scrollHeight;
+  })
+</script>
+
+{% endblock %}

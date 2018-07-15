@@ -1,0 +1,9 @@
+#vdetelweb rc sample
+ip=192.168.250.5
+netmask=255.255.255.0
+# to create a new passwd run the following command:
+# $ echo -n piripicchio | sha1sum
+# typing your passwd instead of "piripicchio"
+username=admin
+password=e8b32ad31b34a21d9fa638c2ee6cf52d46d5106b
+stack=lwipv6

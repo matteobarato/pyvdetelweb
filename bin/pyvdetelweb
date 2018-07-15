@@ -1,0 +1,135 @@
+#!/usr/bin/env python
+import os
+import sys
+import socket as SOCKET
+import logging as log
+from threading import  Thread
+import argparse
+
+from pycotcp.pycotcp import Pyco
+from pycotcp.pycotcp import DeviceInfo
+from pycotcp.lwipv6adapter import Lwipv6Adapter
+import pycotcp.socket as Socket
+
+import pyvdetelweb.utils as utils
+from pyvdetelweb.web import web
+from pyvdetelweb.telnet import telnet
+from pyvdetelweb.Vde2Mgmt import Vde2Mgmt
+
+
+log.basicConfig(format="%(levelname)s: %(message)s")
+
+
+def main(options, config):
+
+    # MAKE VDE DEVICE AND CONNECT TO VDE SOCKET
+    #-----------------------------------------
+    if (config['stack'] == 'lwipv6'):
+        log.info('Initialize LWIPv6 TCP/IP stack...')
+        context = Lwipv6Adapter()
+    else:
+        log.info('Initialize PycoTCP TCP/IP stack...')
+        context = None
+
+    Socket.socket.default_context = context
+
+    ioth = Pyco(context=context)
+    device = DeviceInfo(context=context).with_type("vde") \
+        .with_name("pyvdetelweb") \
+        .with_path(options.socket) \
+        .with_address(config['ip']) \
+        .with_netmask(config['netmask']) \
+        .create()
+    #ioth.start_handler()
+
+    sys_info = {
+        'hostname': SOCKET.gethostname(),
+        'stack_context': context,
+        'mgmt_socket': options.mgmt_socket,
+        'socket': options.socket,
+        'terminal_prefix': 'VDE2@' + SOCKET.gethostname() + '[' + options.mgmt_socket + ']: ',
+        'config': config
+    }
+    # Create a UDS socket
+    sock = SOCKET.socket(SOCKET.AF_UNIX, SOCKET.SOCK_STREAM)
+
+    # Connect the socket to the port where the server is listening
+    log.info('Connecting to mgmt socket : ' + options.mgmt_socket + ' ...')
+    try:
+        sock.connect(options.mgmt_socket)
+        log.info('Connected')
+    except SOCKET.error, msg:
+        log.critical('error during opening MGMT socket. Caught exception: %s', msg)
+        sock.close()
+        sys.exit(1)
+
+    try:
+        MGMT = Vde2Mgmt(sock, 1024, sys_info)
+        threads = []
+        try:
+            if options.web:
+                log.info('Starting web server...')
+                threads.append(Thread(target=web, args=(MGMT,) ))
+            if options.telnet:
+                log.info('Starting telnet server...')
+                threads.append(Thread(target=telnet, args=(MGMT,) ))
+
+            [t.start() for t in threads] # start all threads
+            [t.join() for t in threads] # wait finish of all threads
+        except Exception, msg:
+            log.critical(msg)
+
+    finally:
+        log.critical('closing socket')
+        device.destroy()
+        sock.close()
+        if (options.pidfile):
+            os.unlink(options.pidfile)
+
+
+def init():
+    parser = argparse.ArgumentParser(description='Management tool for vde switch')
+    parser.add_argument('-w', '--web', action='store_true',
+                        required=False, help='Start Web server interface')
+    parser.add_argument('-t', '--telnet', action='store_true',
+                        required=False, help='Start Telnet server interface')
+    parser.add_argument('-d', '--daemon', action='store_true',
+                        required=False, help='Daemonize vdetelweb once run')
+    parser.add_argument('-p', '--pidfile', type=str,
+                        required=False, help='Write pid of process to PIDFILE')
+    parser.add_argument('-f', '--rcfile', type=str, required=False, default='/etc/vde/pyvdetelweb/vdetelweb.rc',
+                        help='Configuration file path (default: [/etc/vde/vdetelweb/vdetelweb.rc])')
+    parser.add_argument('-s', '--socket', type=str, required=False, default='/tmp/vde.ctl',
+                        help='VDE control directoy path (default: [/tmp/vde.ctl])')
+    parser.add_argument('-m', '--mgmt_socket', type=str,
+                        required=True, help='Management UNIX socket path')
+    # parser.add_argument('-S', '--ssh', action='store_true',
+    #                     required=False, help='Start SSH server interface')
+
+    options = parser.parse_args()
+
+    # CHECK IF CONFIG FILE EXIST AND GET INFORMATION
+    #---------------------------------------------
+    config = {}
+
+    # default configuration file's path ['/etc/vde/vdetelwebrc/vdetelweb.conf']
+    if os.path.exists(options.rcfile):
+        config = utils.parseConfig(options.rcfile)
+    else:
+        log.error("Configuration file not found in %s" % options.rcfile)
+        sys.exit(2)
+
+
+    if options.pidfile:
+        # save pid file
+        pidfile = options.pidfile
+        pid = str(os.getpid())
+        if os.path.isfile(pidfile):
+            log.error("%s already exists" % pidfile)
+            sys.exit(2)
+            file(pidfile, 'w').write(pid)
+    main(options, config)
+
+
+
+init()

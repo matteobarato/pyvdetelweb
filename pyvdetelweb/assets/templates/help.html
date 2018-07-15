@@ -1,0 +1,24 @@
+{% extends "template.html" %}
+{% block content %}
+  <h1>VDE2 HELP</h1>
+  <p><span class="text-secondary">[...] is an optional prameter</span></p>
+  <hr/>
+  <div class="row">
+    <div class="form-group row">
+      <div class="col-10">
+        <input type="text" name="filter-input" class="form-control" id="filter-input" placeholder="Search Command">
+      </div>
+    </div>
+    <hr>
+
+    <ul class="list-group col-12">
+      {% for cmd in cmds %}
+      <a href="/{{cmd['cmd']}}" class="list-group-item form-cmd">
+        {{cmd['cmd']}}
+        <span class="float-right text-secondary">{{cmd['help']}}</span>
+      </a>
+      {% endfor %}
+    </ul>
+  </div>
+  <hr/>
+{% endblock %}

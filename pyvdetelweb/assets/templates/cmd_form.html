@@ -1,0 +1,27 @@
+{% extends "template.html" %}
+{% block content %}
+<h1><u>{{cmd['cmd']}}:</u></h1>
+<p><span class="text-secondary">[...] is an optional prameter</span></p>
+
+<form method="POST" action="/api/{{cmd['cmd']}}" class="form-cmd">
+  <div class="row mb-2">
+    <h3> {{cmd['cmd']}}</h3> <button type="submit" class="btn btn-primary ml-3">Send</button>
+  </div>
+  <code> {{cmd['help']}}</code>
+
+  <div class="row">
+    {% for arg in cmd['args'] %}
+    <div class="col-auto form-group">
+      <div class="input-group">
+        <span class="input-group-addon">{{arg}}</span>
+        <input type="text" name={{arg}} class="form-control" placeholder="{{arg}}">
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="response-container">
+    <!-- display response from mangement socket -->
+  </div>
+</form>
+<hr>
+{% endblock %}

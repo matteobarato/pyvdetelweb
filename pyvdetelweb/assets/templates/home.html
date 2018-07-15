@@ -1,0 +1,14 @@
+{% extends "template.html" %}
+{% block content %}
+  <h1>VDE2 MENU</h1>
+  <p><span class="text-secondary">[...] is an optional prameter</span></p>
+  <hr/>
+  <div class="row">
+    {% for cmd in cmds %}
+    <div class="col-sm-6 col-md-3 float-left mt-2">
+        <a href="/{{cmd}}"><btn class="btn btn-outline-primary">{{cmd}}</btn></a>
+    </div>
+    {% endfor %}
+  </div>
+  <hr/>
+{% endblock %}

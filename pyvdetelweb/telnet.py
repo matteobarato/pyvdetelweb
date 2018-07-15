@@ -34,10 +34,10 @@ def telnet (mgmt):
             psw = ''
 
             conn.sendall('\nUsername:') #send showinfo (welcome message)
-            while not user:
+            while not user or user=='':
                 user = conn.recv(TBUFFER).strip()
             conn.sendall('Password:') #send showinfo (welcome message)
-            while not psw:
+            while not psw or psw =='':
                 psw = conn.recv(TBUFFER).strip()
 
 

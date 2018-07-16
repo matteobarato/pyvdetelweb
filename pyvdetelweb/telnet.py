@@ -1,4 +1,6 @@
 import pycotcp.socket as socket
+import re
+
 TBUFFER = 1024
 PORT = 23
 
@@ -35,10 +37,10 @@ def telnet (mgmt):
 
             conn.sendall('\nUsername:') #send showinfo (welcome message)
             while not user or user=='':
-                user = conn.recv(TBUFFER).strip()
+                user = re.sub(r'\W+', '', conn.recv(TBUFFER)).strip()
             conn.sendall('Password:') #send showinfo (welcome message)
             while not psw or psw =='':
-                psw = conn.recv(TBUFFER).strip()
+                psw = re.sub(r'\W+', '', conn.recv(TBUFFER)).strip()
 
 
             if not mgmt.authenticate(user, psw): # if not authenticate

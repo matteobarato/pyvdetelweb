@@ -98,7 +98,7 @@ def init():
     parser.add_argument('-p', '--pidfile', type=str,
                         required=False, help='Write pid of process to PIDFILE')
     parser.add_argument('-f', '--rcfile', type=str, required=False, default='/etc/vde/pyvdetelweb/vdetelweb.rc',
-                        help='Configuration file path (default: [/etc/vde/vdetelweb/vdetelweb.rc])')
+                        help='Configuration file path (default: [/etc/vde/pyvdetelweb/vdetelweb.rc])')
     parser.add_argument('-s', '--socket', type=str, required=False, default='/tmp/vde.ctl',
                         help='VDE control directoy path (default: [/tmp/vde.ctl])')
     parser.add_argument('-m', '--mgmt_socket', type=str,

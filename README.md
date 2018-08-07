@@ -49,7 +49,7 @@ pip install .
 ### Dipendenze ###
 
 La libreria PycoTCP è necessaria per connettersi alle reti VDE
-Segui le istruzioni in pyvdetelweb/pycotcp/README-it.md per installare il modulo e le sue dipendenze.
+Segui le istruzioni in *pyvdetelweb/pycotcp/README-it.md* per installare il modulo e le sue dipendenze.
 
 Per più informazioni su VDE, visita [La Wiki di VDE, Virtual Square](http://wiki.v2.cs.unibo.it/)
 
@@ -62,17 +62,21 @@ Le chiamate sono differenziate tramite metodo GET (per avere informazioni relati
 Le route sono disposte gerarchicamente ad albero rispettando la struttura dei comandi da terimnale, avendo come prefisso __/api__ (es. '/api/port/print').
 
 Struttura risposta GET:
-*`commands` : lista di commandi raggiungibile dalla path specificata
-*`resource` : path del comando richiesto
-*`showinfo` : informazioni relative al manamgment socket
-*`terminal_prefix` : prefisso del terminale con informazoni relative alla connesione
+```
+- `commands` : lista di commandi raggiungibile dalla path specificata
+- `resource` : path del comando richiesto
+- `showinfo` : informazioni relative al manamgment socket
+- `terminal_prefix` : prefisso del terminale con informazoni relative alla connesione
+```
 
 Struttura riposta POST:
-*`command` : comando inviato inviato al terminale
-*`arguments` : argomenti relativi al comando
-*`response` : risposta ristornata dal terminale
-*`terminal_prefix` : prefisso del terminale con informazoni relative alla connesione
+```
+- `command` : comando inviato inviato al terminale
+- `arguments` : argomenti relativi al comando
+- `response` : risposta ristornata dal terminale
+-`terminal_prefix` : prefisso del terminale con informazoni relative alla connesione
+```
 
 L'accesso alle API richiede autenticazione basta su [HTTTP BASIC AUTHENTICATION](https://en.wikipedia.org/wiki/Basic_access_authentication)
 aggiungendo l'header HTTP Authorization alle chiamate:
-*Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l
+`Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l`

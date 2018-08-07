@@ -55,11 +55,11 @@ Per più informazioni su VDE, visita [La Wiki di VDE, Virtual Square](http://wik
 
 REST API
 --------
-Pyvdetelweb grantisce anche un interfaccia tramite __web API__ (architettura [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer)) bastato su protocollo HTTP gestire con cui è possibile comunicare al __mangment sokcet__ dello switch VDE in maniera simile.
-Questo servizio viene utilizzato anche dall'interfaccia HTML per comunicare con il server tramite chiamate asincrone AJAX.
+Pyvdetelweb grantisce anche un interfaccia tramite __web API__ (architettura [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer)) bastato su protocollo HTTP con cui è possibile comunicare con il __mangment sokcet__ dello switch VDE.
+Questo servizio viene utilizzato anche dall'interfaccia HTML per inviare richieste al server tramite chiamate asincrone AJAX.
 
 Le chiamate sono differenziate tramite metodo GET (per avere informazioni relative al comando) e POST (per eseguire il comando).
-Le route sono disposte gerarchicamente ad albero rispettando la struttura dei comandi da terimnale, avendo come prefisso __/api__ (es. '/api/port/print').
+Le route sono disposte gerarchicamente ad albero rispettando la struttura dei comandi da terimnale, e avendo come prefisso __/api__ (es. '/api/port/print').
 
 Il server risponde con un JSON riportando il dettagli della richiesta e il contentuo della della riposta in maniera così strutturata:
 

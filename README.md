@@ -86,3 +86,8 @@ Il server risponde con un JSON riportando il dettagli della richiesta e il conte
 L'accesso alle API richiede autenticazione basta su [HTTTP BASIC AUTHENTICATION](https://en.wikipedia.org/wiki/Basic_access_authentication)
 aggiungendo l'header HTTP Authorization alle chiamate:
 `Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l`
+
+TODO
+----
+- [ ] Supporto per protocollo HTTPS
+- [ ] Supporto per protocollo SSH

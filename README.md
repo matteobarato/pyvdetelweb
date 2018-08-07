@@ -11,7 +11,7 @@ pyvdetelweb -web -telnet -s /tmp/vde.ctl -m /tmp/vde.mgmt
 ```
 Dove __-s__ indica la posizione della directory di controllo dello switch vde e  __-m__ è il manamgment socket di un switch vde
 
-Configurazione:
+Configurazione
 ---------------
 Il file di configuraione 'vdetelweb.rc' è installato di default in '/etc/vde/pyvdetelweb' e contiene i paramentri necessari per l'avvio del tool:
 
@@ -46,16 +46,33 @@ cd ./pyvdetelweb
 
 pip install .
 ```
-### Installa tutte le dipendenze ###
+### Dipendenze ###
 
 La libreria PycoTCP è necessaria per connettersi alle reti VDE
 Segui le istruzioni in pyvdetelweb/pycotcp/README-it.md per installare il modulo e le sue dipendenze.
 
-install FD_PICOTCP https://github.com/exmorse/fd_picotcp
-apt-get install liblwipv6-dev
-
 Per più informazioni su VDE, visita [La Wiki di VDE, Virtual Square](http://wiki.v2.cs.unibo.it/)
 
-TODO:
-- aggiungere documentazione REST api
+REST API
+--------
+Pyvdetelweb grantisce anche un interfaccia tramite __web API__ (architettura [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer)) bastato su protocollo HTTP gestire con cui è possibile comunicare al __mangment sokcet__ dello switch VDE in maniera simile.
+Questo servizio viene utilizzato anche dall'interfaccia HTML per comunicare con il server tramite chiamate AJAX.
 
+Le chiamate sono differenziate tramite metodo GET (per avere informazioni relative al comando) e POST (per eseguire il comando).
+Le route sono disposte gerarchicamente ad albero rispettando la struttura dei comandi da terimnale, avendo come prefisso __/api__ (es. '/api/port/print').
+
+Struttura risposta GET:
+*`commands` : lista di commandi raggiungibile dalla path specificata
+*`resource` : path del comando richiesto
+*`showinfo` : informazioni relative al manamgment socket
+*`terminal_prefix` : prefisso del terminale con informazoni relative alla connesione
+
+Struttura riposta POST:
+*`command` : comando inviato inviato al terminale
+*`arguments` : argomenti relativi al comando
+*`response` : risposta ristornata dal terminale
+*`terminal_prefix` : prefisso del terminale con informazoni relative alla connesione
+
+L'accesso alle API richiede autenticazione basta su [HTTTP BASIC AUTHENTICATION](https://en.wikipedia.org/wiki/Basic_access_authentication)
+aggiungendo l'header HTTP Authorization alle chiamate:
+*Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l

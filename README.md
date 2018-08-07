@@ -63,18 +63,22 @@ Le route sono disposte gerarchicamente ad albero rispettando la struttura dei co
 
 Struttura risposta GET:
 ```
-- `commands` : lista di commandi raggiungibile dalla path specificata
-- `resource` : path del comando richiesto
-- `showinfo` : informazioni relative al manamgment socket
-- `terminal_prefix` : prefisso del terminale con informazoni relative alla connesione
+{
+ **commands** : "lista di commandi raggiungibile dalla path specificata"
+ **resource** : "path del comando richiesto"
+ **showinfo** : "informazioni relative al manamgment socket"
+ **terminal_prefix** : "prefisso del terminale con informazoni relative alla connesione"
+}
 ```
 
 Struttura riposta POST:
 ```
-- `command` : comando inviato inviato al terminale
-- `arguments` : argomenti relativi al comando
-- `response` : risposta ristornata dal terminale
--`terminal_prefix` : prefisso del terminale con informazoni relative alla connesione
+{
+  **command** : comando inviato inviato al terminale
+  **arguments** : argomenti relativi al comando
+  **response** : risposta ristornata dal terminale
+  **terminal_prefix** : prefisso del terminale con informazoni relative alla connesione
+}
 ```
 
 L'accesso alle API richiede autenticazione basta su [HTTTP BASIC AUTHENTICATION](https://en.wikipedia.org/wiki/Basic_access_authentication)

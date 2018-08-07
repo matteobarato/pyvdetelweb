@@ -64,7 +64,7 @@ Le route sono disposte gerarchicamente ad albero rispettando la struttura dei co
 Struttura risposta GET:
 ```
 {
- **commands** : "lista di commandi raggiungibile dalla path specificata"
+ <b>commands</b> : "lista di commandi raggiungibile dalla path specificata"
  **resource** : "path del comando richiesto"
  **showinfo** : "informazioni relative al manamgment socket"
  **terminal_prefix** : "prefisso del terminale con informazoni relative alla connesione"

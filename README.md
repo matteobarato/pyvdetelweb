@@ -2,7 +2,7 @@
 pyvdetelweb
 ========================
 
-pyvdetelweb è un tool per la gestione di reti VDE da remoto, scritto in Python utilizzando la libreria PyctoTCP.
+pyvdetelweb è un tool per la gestione di reti VDE da remoto, scritto in Python utilizzando la libreria PycoTCP.
 Offre il collegamento tramite interfaccia telenet o server web.
 
 Per avviarlo:
@@ -83,7 +83,7 @@ Il server risponde con un JSON riportando il dettagli della richiesta e il conte
 }
 ```
 
-L'accesso alle API richiede autenticazione basta su [HTTTP BASIC AUTHENTICATION](https://en.wikipedia.org/wiki/Basic_access_authentication)
+L'accesso alle API richiede autenticazione basta su [HTTP BASIC AUTHENTICATION](https://en.wikipedia.org/wiki/Basic_access_authentication)
 aggiungendo l'header HTTP Authorization alle chiamate:
 `Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l`
 

@@ -87,7 +87,7 @@ L'accesso alle API richiede autenticazione basta su [HTTP BASIC AUTHENTICATION](
 aggiungendo l'header HTTP Authorization alle chiamate:
 `Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l`
 
-Testato su Ubuntu 16.04 LTS
+Testato su Ubuntu 16.04 LTS, Ubuntu 18.04 LTS
 
 TODO
 ----
